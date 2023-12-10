@@ -1,15 +1,13 @@
 # DecodeNcodeAnything
-###  Utilizing synthetic DNA 🧬 as a digital storage 💾 medium
+###  Utilizing synthetic DNA 🧬 as a data storage 💾 medium
 A refactoring of the [Adaptive DNA Storage Codec (ADS Codex)](https://github.com/lanl/adscodex) in "modern" C++.
 
 ## Table of Contents
 - [External Dependencies](#external-dependencies)
 - [Installation](#installation)
+- [Running the Program](#running-the-program)
+- [Features](#features)
 - [Documentation](#documentation)
-- [TODO](#todo)
-  - [Implement C++20 Features](#implement-c20-features)
-  - [Implement Reed–Solomon Error Correction](#implement-reedsolomon-error-correction)
-  - [Implementing Google's Testing Framework](#implement-googles-testing-framework)
 - [Plans for Future Releases](#plans-for-future-releases)
 - [Acknowledgments](#acknowledgments)
 
@@ -40,13 +38,21 @@ A refactoring of the [Adaptive DNA Storage Codec (ADS Codex)](https://github.com
 
 3. **Configure the project with CMake:**
 
-    ```bash
+    On Debian-based systems:
+
+    ```
     cmake ..
+    ```
+
+    On Windows (Make sure your MinGW-x64 version is newer than 11.0.0):
+
+    ```bash
+    cmake -G "MinGW Makefiles" ..
     ```
 
 4. **Build the project:**
 
-    ```bash
+    ```
     make
     ```
 
@@ -58,16 +64,17 @@ To generate documentation using Doxygen, follow these steps:
 
 1. **Install Doxygen:**
 
-    Ensure that Doxygen is installed on your system. If it's not installed, you can typically install it using your package manager. For example, on Debian-based systems:
+    Ensure that Doxygen is installed on your system. If it's not installed, you can typically install it using your package manager. 
+
+    For example, on Debian-based systems:
 
     ```bash
     sudo apt-get install doxygen
     ```
+    On Windows system:
 
-    On Red Hat-based systems:
-
-    ```bash
-    sudo yum install doxygen
+    ```
+    git clone https://github.com/doxygen/doxygen.git
     ```
 
     Refer to the [Doxygen installation guide](https://www.doxygen.nl/manual/install.html) for more details.
@@ -80,11 +87,17 @@ To generate documentation using Doxygen, follow these steps:
 
 3. **Run the documentation generation script:**
 
+    On Debian-based systems
+
     ```bash
     scripts/gen_docs.sh
     ```
 
     This script generates a new Doxyfile, configures it, and runs Doxygen to generate documentation in the `./docs` folder.
+
+    On Windows system:
+
+    Just use Visual Studio to construct the project. Then it will generate a doxygen.exe.
 
 4. **Access the documentation:**
 
@@ -96,112 +109,21 @@ To generate documentation using Doxygen, follow these steps:
 
     Open the `index.html` file in a web browser to explore the generated documentation.
 
-## TODO
-
-### Implement C++20 Features
-
-1. **Concepts:**
-   Express constraints on template parameters, improving template code readability.
-     ```cpp
-     template <typename T> concept Integral = std::is_integral_v<T>;
-     void function(Integral auto value) { /* Implementation */ }
-     ```
-
-2. **Ranges:**
-   Library for range-based algorithms and views, simplifying the manipulation of sequences of values.
-     ```cpp
-     std::vector<int> numbers = {1, 2, 3, 4, 5};
-     auto evenNumbers = numbers | std::views::filter([](int n) { return n % 2 == 0; });
-     ```
-
-3. **Coroutines:**
-   More efficient and readable asynchronous code.
-     ```cpp
-     #include <iostream>
-     #include <coroutine>
-     generator<int> generateNumbers(int start, int end) {
-         for (int i = start; i <= end; ++i)
-             co_yield i;
-     }
-     // Usage:
-     auto numbers = generateNumbers(1, 5);
-     for (int num : numbers) {
-         std::cout << num << " ";
-     }
-     ```
-
-4. **Three-Way Comparison Operator (`<=>`):**
-   The spaceship operator simplifies the implementation of comparison operations.
-     ```cpp
-     struct Person {
-         std::string name;
-         int age;
-         auto operator<=>(const Person& other) const = default;
-     };
-     ```
-
-5. **Calendar and Timezone Library:**
-   Enhanced `<chrono>` library for working with calendars and time zones.
-     ```cpp
-     #include <chrono>
-     #include <iostream>
-     auto currentTime = std::chrono::system_clock::now();
-     auto timePoint = std::chrono::floor<std::chrono::days>(currentTime);
-     ```
-
-6. **Improvements to `std::span`:**
-   Class template for non-owning references to contiguous sequences.
-     ```cpp
-     #include <span>
-     #include <iostream>
-     std::array<int, 5> data = {1, 2, 3, 4, 5};
-     std::span<int, 5> dataSpan = data;
-     ```
-
-7. **Modules:**
-   Improve the modularity of C++ code and reduce compilation times.
-     ```cpp
-     import std.core; // hypothetical module import syntax
-     int main() {
-         std::cout << "Hello, Modules!\n";
-     }
-     ```
-
-8. **Improved `constexpr` Support:**
-   Allows for more complex computations at compile-time.
-     ```cpp
-     constexpr int fibonacci(int n) {
-         return (n <= 1) ? n : (fibonacci(n - 1) + fibonacci(n - 2));
-     }
-     constexpr int result = fibonacci(5);
-     ```
+## Running the Program
+After cloning and building the the program, the executables (including test programs) are located in the build directory. Running the program is simple: 
+```
+./build/app/encode <file-to-be-encoded>
+```
+or alternatively, 
+```
+./build/app/encode <file-to-be-decoded>
+```
+The decoder expects the FASTQ files while the encoder can handle any readable file. 
 
 
-9. **Changes to `std::string`:**
-    - **`starts_with` and `ends_with` Member Functions:** Check whether a string starts or ends with a specified substring.
-       ```cpp
-       std::string myString = "Hello, World!";
-       if (myString.starts_with("Hello")) {
-           // Code to handle the case where the string starts with "Hello"
-       }
-       ```
-       - **`reserve` Function for Capacity Management:** Preallocate memory for a specified number of characters, helping to manage the capacity of the string more efficiently.
-       ```cpp
-       std::string myString;
-       myString.reserve(420); // Reserve space for 420 characters
-       ```
-       - **`erase` for Removing Elements:** A more flexible idiom for removing elements from a string at specific positions or ranges.
-       ```cpp
-       std::string myString = "Hello, World!";
-       myString.erase(myString.begin() + 7); // Erase the character at position 7
-       ```
-
-### Implement Reed–Solomon Error Correction
-
-Existing C++ libraries for Reed–Solomon error correction to consider:
-  - [schifra](https://github.com/ArashPartow/schifra): A C++ template library for Reed–Solomon error correction.
-  - [ReedSolomon](https://github.com/FluffyJay1/ReedSolomon): A C++ implementation of Reed–Solomon codes.
-  - [librs](https://www.kernel.org/doc/html/v4.18/core-api/librs.html): The Linux kernel's Reed–Solomon library.
+## Features
+###  Reed–Solomon Error Correction
+Library written in C++ for module export.
 
 > Reed–Solomon Error Correction is a mathematical technique that allows the correction of errors in transmitted or stored data to enhance reliability and robustness. It is widely used in various applications, including data storage, QR codes, and digital communication.
 
@@ -209,7 +131,7 @@ Resources for understanding Reed–Solomon error correction:
   - [Reed–Solomon Codes on Wikipedia](https://en.wikipedia.org/wiki/Reed%E2%80%93Solomon_error_correction)
   - [Introduction to Reed–Solomon Codes](https://www.cs.cmu.edu/~guyb/realworld/reedsolomon/reed_solomon_codes.html)
 
-### Implement [Google's testing framework](https://github.com/google/googletest).
+## TODO: Implement [Google's testing framework](https://github.com/google/googletest).
 
 Example:
 
@@ -249,7 +171,6 @@ These plans are subject to change based on community feedback and project priori
 
 If you have specific features or improvements you would like to see in future releases, feel free to contribute to the discussion on our [GitHub repository](https://github.com/rdnajac/DecodeNcodeAnything) or open a new issue.
 
-
 ## Acknowledgments
 
 - [Adaptive DNA Storage Codec (ADS Codex)](https://github.com/lanl/adscodex): The foundation for this project.
@@ -260,4 +181,3 @@ If you have specific features or improvements you would like to see in future re
 - [Oxford Nanopore Technology](https://nanoporetech.com/): For advancements in nanopore sequencing.
 - [Kilobaser](https://kilobaser.com/): For innovations in DNA synthesis technology.
 - [Bjarne Stroustrup](http://www.stroustrup.com/): For his foundational contributions to C++ and for his guidance in this project.
-

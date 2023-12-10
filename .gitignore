@@ -40,3 +40,8 @@
 # Ignore hidden files
 .*
 
+/utils/gzip_processor
+
+Doxyfile*
+docs/html/
+docs/latex/
